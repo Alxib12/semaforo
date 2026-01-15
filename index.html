@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Semáforo Remoto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: sans-serif; }
+        #fondo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .controles { display: none; background: rgba(255,255,255,0.9); padding: 30px; border-radius: 20px; text-align: center; }
+        button { padding: 25px 50px; font-size: 24px; font-weight: bold; cursor: pointer; border: none; border-radius: 10px; margin: 10px; color: white; text-transform: uppercase; }
+        .btn-rojo { background: #e74c3c; }
+        .btn-verde { background: #2ecc71; }
+    </style>
+</head>
+<body>
+
+    <div id="fondo">
+        <div id="controles" class="controles">
+            <button class="btn-rojo" onclick="enviar('red')">ROJO</button>
+            <button class="btn-verde" onclick="enviar('green')">VERDE</button>
+            <p>MODO CONTROLADOR</p>
+        </div>
+    </div>
+
+    <script>
+        // --- PEGA AQUÍ TUS DATOS DEL PASO 2 ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyB5zOGyRxwK31WJU2Kc15OwtFXxVUjiv-4",
+  authDomain: "semaforo-61c99.firebaseapp.com",
+  databaseURL: "https://semaforo-61c99-default-rtdb.firebaseio.com",
+  projectId: "semaforo-61c99",
+  storageBucket: "semaforo-61c99.firebasestorage.app",
+  messagingSenderId: "752007817631",
+  appId: "1:752007817631:web:3185758de4f448c2b7f5aa",
+  measurementId: "G-PHFC5ZX00X"
+};
+        // ---------------------------------------
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Detectar si la URL termina en ?modo=control
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('modo') === 'control') {
+            document.getElementById('controles').style.display = 'block';
+        }
+
+        // Función para cambiar el color
+        function enviar(color) {
+            db.ref('semaforo/color').set(color);
+        }
+
+        // Escuchar cambios
+        db.ref('semaforo/color').on('value', (snapshot) => {
+            const color = snapshot.val();
+            if (color) {
+                document.getElementById('fondo').style.backgroundColor = color;
+            }
+        });
+    </script>
+</body>
+</html>

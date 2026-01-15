@@ -1,41 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Semáforo Remoto</title>
+    <title>Semáforo Remoto - LIVE/OFF</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: sans-serif; }
-        #fondo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .controles { display: none; background: rgba(255,255,255,0.9); padding: 30px; border-radius: 20px; text-align: center; }
-        button { padding: 25px 50px; font-size: 24px; font-weight: bold; cursor: pointer; border: none; border-radius: 10px; margin: 10px; color: white; text-transform: uppercase; }
-        .btn-rojo { background: #e74c3c; }
-        .btn-verde { background: #2ecc71; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Arial Black', sans-serif; }
+        
+        #fondo { 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            transition: background 0.3s ease;
+            background-color: #555555; /* Gris por defecto */
+        }
+
+        #cartel {
+            color: white;
+            font-size: 15vw; /* Tamaño gigante responsivo */
+            margin: 0;
+            text-shadow: 4px 4px 15px rgba(0,0,0,0.5);
+            user-select: none;
+        }
+
+        .controles { 
+            display: none; 
+            position: absolute;
+            bottom: 20px;
+            background: rgba(255,255,255,0.9); 
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        button { 
+            padding: 20px 40px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 10px; 
+            margin: 10px; 
+            color: white; 
+            text-transform: uppercase; 
+        }
+
+        .btn-rojo { background: #e74c3c; } /* Botón para LIVE */
+        .btn-gris { background: #7f8c8d; } /* Botón para OFF */
     </style>
 </head>
 <body>
 
     <div id="fondo">
+        <h1 id="cartel">ESPERANDO...</h1>
+
         <div id="controles" class="controles">
-            <button class="btn-rojo" onclick="enviar('red')">ROJO</button>
-            <button class="btn-verde" onclick="enviar('green')">VERDE</button>
-            <p>MODO CONTROLADOR</p>
+            <button class="btn-rojo" onclick="enviar('red')">ENCENDER (LIVE)</button>
+            <button class="btn-gris" onclick="enviar('gray')">APAGAR (OFF)</button>
+            <p style="color: #333; font-family: sans-serif; font-size: 12px;">MODO CONTROLADOR ACTIVADO</p>
         </div>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyB5zOGyRxwK31WJU2Kc15OwtFXxVUjiv-4",
-  authDomain: "semaforo-61c99.firebaseapp.com",
-  databaseURL: "https://semaforo-61c99-default-rtdb.firebaseio.com",
-  projectId: "semaforo-61c99",
-  storageBucket: "semaforo-61c99.firebasestorage.app",
-  messagingSenderId: "752007817631",
-  appId: "1:752007817631:web:3185758de4f448c2b7f5aa",
-  measurementId: "G-PHFC5ZX00X"
-};
-
+            apiKey: "AIzaSyB5zOGyRxwK31WJU2Kc15OwtFXxVUjiv-4",
+            authDomain: "semaforo-61c99.firebaseapp.com",
+            databaseURL: "https://semaforo-61c99-default-rtdb.firebaseio.com",
+            projectId: "semaforo-61c99",
+            storageBucket: "semaforo-61c99.firebasestorage.app",
+            messagingSenderId: "752007817631",
+            appId: "1:752007817631:web:3185758de4f448c2b7f5aa",
+            measurementId: "G-PHFC5ZX00X"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -49,14 +90,19 @@
             db.ref('semaforo/color').set(color);
         }
 
-
         db.ref('semaforo/color').on('value', (snapshot) => {
             const color = snapshot.val();
-            if (color) {
-                document.getElementById('fondo').style.backgroundColor = color;
+            const fondo = document.getElementById('fondo');
+            const cartel = document.getElementById('cartel');
+
+            if (color === 'red') {
+                fondo.style.backgroundColor = "#e74c3c"; // Rojo
+                cartel.innerText = "LIVE";
+            } else if (color === 'gray') {
+                fondo.style.backgroundColor = "#555555"; // Gris
+                cartel.innerText = "OFF";
             }
         });
     </script>
 </body>
 </html>
-

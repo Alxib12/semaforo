@@ -25,7 +25,6 @@
     </div>
 
     <script>
-        // --- PEGA AQUÍ TUS DATOS DEL PASO 2 ---
         const firebaseConfig = {
   apiKey: "AIzaSyB5zOGyRxwK31WJU2Kc15OwtFXxVUjiv-4",
   authDomain: "semaforo-61c99.firebaseapp.com",
@@ -36,23 +35,21 @@
   appId: "1:752007817631:web:3185758de4f448c2b7f5aa",
   measurementId: "G-PHFC5ZX00X"
 };
-        // ---------------------------------------
+
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Detectar si la URL termina en ?modo=control
         const params = new URLSearchParams(window.location.search);
         if (params.get('modo') === 'control') {
             document.getElementById('controles').style.display = 'block';
         }
 
-        // Función para cambiar el color
         function enviar(color) {
             db.ref('semaforo/color').set(color);
         }
 
-        // Escuchar cambios
+
         db.ref('semaforo/color').on('value', (snapshot) => {
             const color = snapshot.val();
             if (color) {
@@ -62,3 +59,4 @@
     </script>
 </body>
 </html>
+
